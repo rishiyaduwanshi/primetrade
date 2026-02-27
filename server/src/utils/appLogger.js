@@ -22,8 +22,12 @@ morgan.token('user', (req) => {
   return req.user ? req.user.id : 'Guest'; 
 });
 
-morgan.token('ip', (req) => {
-  return req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+morgan.token("ip", (req) => {
+  return (
+    req.ip ||
+    req.socket?.remoteAddress ||
+    "-"
+  );
 });
 
 const customMorganFormat =
