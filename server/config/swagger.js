@@ -73,6 +73,7 @@ const options = {
             },
         },
         tags: [
+            { name: 'Health', description: 'Server health check' },
             { name: 'Auth', description: 'Authentication endpoints' },
             { name: 'Tasks', description: 'Task CRUD endpoints' },
             { name: 'Admin', description: 'Admin-only endpoints' },
