@@ -1,6 +1,18 @@
 # PrimeTrade — Scalable REST API with Authentication & RBAC
 
-A full-stack application built as a Backend Developer Intern assignment. Features JWT authentication, role-based access control (RBAC), task CRUD APIs, Swagger documentation, and a React frontend.
+A full-stack application built for the **Backend Developer Intern assignment**. Features JWT authentication, role-based access control (RBAC), Task CRUD APIs with Zod validation, Swagger documentation, React frontend, and Docker deployment.
+
+---
+
+## 🔗 Live Demo
+
+| Service | URL |
+|---------|-----|
+| **Frontend** | https://primetrade.flyo.cc |
+| **Swagger API Docs** | https://primetrade.flyo.cc/api-docs |
+| **GitHub Repo** | https://github.com/rishiyaduwanshi/primetrade |
+
+> **Note:** The backend server is not directly exposed. All traffic routes through Nginx — `/api/v1/*` and `/api-docs` are proxied to the Express server; `/` serves the React frontend. Swagger's "Try it out" works fully via this proxy.
 
 ---
 
@@ -8,12 +20,14 @@ A full-stack application built as a Backend Developer Intern assignment. Feature
 
 | Layer    | Technology                                      |
 |----------|-------------------------------------------------|
-| Backend  | Node.js, Express v5, MongoDB (Mongoose), Zod    |
-| Auth     | JWT (access + refresh tokens), bcryptjs, httpOnly cookies |
-| Docs     | Swagger (swagger-jsdoc + swagger-ui-express)    |
+| Backend | Node.js 22, Express v5, MongoDB Atlas (Mongoose 8) |
+| Auth | JWT (access + refresh tokens), bcryptjs, httpOnly cookies |
+| Validation | Zod v4 — schema-based, returns `422` with field-level errors |
+| Docs | Swagger UI (swagger-jsdoc + swagger-ui-express) |
 | Frontend | React 19, Vite 7, Tailwind CSS v4, React Router v7 |
-| Logging  | Winston + Morgan                                |
-| Rate Limiting | express-rate-limit                         |
+| Logging | Winston + Morgan (rotating file transport) |
+| Rate Limiting | express-rate-limit (global + per-IP) |
+| Deployment | Docker + Docker Compose + Nginx reverse proxy |
 
 ---
 
@@ -101,7 +115,8 @@ Frontend starts at **http://localhost:5173**
 
 ## API Documentation
 
-Swagger UI available at: **http://localhost:5050/api-docs**
+- **Local:** http://localhost:5050/api-docs
+- **Live:** https://primetrade.flyo.cc/api-docs
 
 ---
 
@@ -139,14 +154,15 @@ Swagger UI available at: **http://localhost:5050/api-docs**
 
 ## Features
 
-- **JWT Auth**: Access token (1d) + Refresh token (7d) stored in httpOnly cookies with auto-rotation
-- **RBAC**: `user` and `admin` roles; `authorize()` middleware guards admin routes
-- **Zod Validation**: All request bodies validated with Zod schemas; returns `422` with field-level errors
-- **Task CRUD**: Pagination, filtering by status/priority, owner-scoped queries
-- **Admin Panel**: User listing, role toggling, user deletion (frontend + API)
-- **Rate Limiting**: Global + per-IP limits via `express-rate-limit`
-- **Logging**: HTTP logs (Morgan + Winston) with rotating file transport
-- **Swagger Docs**: Full OpenAPI spec at `/api-docs`
+- **JWT Auth** — Access token (1d) + Refresh token (7d) in httpOnly cookies; silent auto-refresh via Axios interceptor
+- **RBAC** — `user` / `admin` roles; `authorize()` middleware on all admin routes
+- **Zod Validation** — All request bodies validated before controllers run; returns `422` with field-level error array
+- **Task CRUD** — Paginated, filterable by status/priority, owner-scoped; admins see all tasks
+- **Admin Panel** — List users, toggle roles, delete users (UI + API)
+- **Admin Seed** — Auto-creates admin on server start from `ADMIN_EMAIL` / `ADMIN_PASSWORD` env vars
+- **Rate Limiting** — Global (1000 req/window) + per-IP (100 req/window)
+- **Logging** — HTTP logs via Morgan, app logs via Winston with daily rotation
+- **Swagger Docs** — Full OpenAPI 3.0 spec with cookie auth, all schemas documented
 
 ---
 
@@ -164,10 +180,21 @@ Client: http://localhost:5173
 
 ## Default Admin Setup
 
-Register a user, then update their role via MongoDB or the API:
+Set these in your `.env` — admin is auto-created on first server start:
 
-```bash
-# Via API (requires an existing admin token)
-PATCH /api/v1/admin/users/:id/role
-{ "role": "admin" }
+```env
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=yourStrongPassword
+ADMIN_NAME=Admin
 ```
+
+---
+
+## Security
+
+- Passwords hashed with **bcrypt** (salt rounds: 10)
+- JWT stored in `httpOnly`, `sameSite: strict` cookies — not accessible via JS
+- Refresh token **rotation** on every use
+- CORS restricted to `ALLOWED_ORIGINS`
+- Rate limiting on all routes
+- Zod input validation before any controller logic runs
