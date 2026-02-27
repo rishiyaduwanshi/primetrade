@@ -89,14 +89,22 @@ export default function Dashboard() {
         setSaving(true);
         try {
             if (modal === 'create') {
-                await createTask(form);
+                const res = await createTask(form);
+                const newTask = res.data.data;
+                // Instantly add to top of list
+                setTasks((prev) => [newTask, ...prev]);
+                setPagination((p) => ({ ...p, total: p.total + 1 }));
                 showAlert('Task created!', 'success');
             } else {
-                await updateTask(editTarget._id, form);
+                const res = await updateTask(editTarget._id, form);
+                const updated = res.data.data;
+                // Instantly replace in list
+                setTasks((prev) =>
+                    prev.map((t) => (t._id === updated._id ? updated : t))
+                );
                 showAlert('Task updated!', 'success');
             }
             closeModal();
-            fetchTasks();
         } catch (err) {
             showAlert(err.response?.data?.message || 'Save failed');
         } finally {
@@ -109,8 +117,10 @@ export default function Dashboard() {
         setDeletingId(id);
         try {
             await deleteTask(id);
+            // Instantly remove from list
+            setTasks((prev) => prev.filter((t) => t._id !== id));
+            setPagination((p) => ({ ...p, total: Math.max(0, p.total - 1) }));
             showAlert('Task deleted', 'success');
-            fetchTasks();
         } catch (err) {
             showAlert(err.response?.data?.message || 'Delete failed');
         } finally {
