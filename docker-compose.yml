@@ -3,7 +3,7 @@ services:
     build: ./server
     container_name: primetrade-server
     ports:
-      - "5050:5050"
+      - "4568:5050"
     environment:
       NODE_ENV: production
       PORT: 5050
@@ -25,7 +25,7 @@ services:
     build: ./client
     container_name: primetrade-client
     ports:
-      - "80:80"
+      - "5173:80"
     depends_on:
       - server
     restart: unless-stopped
