@@ -27,7 +27,8 @@ A full-stack application built for the **Backend Developer Intern assignment**. 
 | Frontend | React 19, Vite 7, Tailwind CSS v4, React Router v7 |
 | Logging | Winston + Morgan (rotating file transport) |
 | Rate Limiting | express-rate-limit (global + per-IP) |
-| Deployment | Docker + Docker Compose + Nginx reverse proxy |
+| Deployment | Docker + Docker Compose, Nginx reverse proxy on **DigitalOcean VPS** |
+| DNS / CDN | **Cloudflare** — proxied DNS, CDN caching, DDoS protection |
 
 ---
 
@@ -166,11 +167,23 @@ Frontend starts at **http://localhost:5173**
 
 ---
 
-## Docker
+## Deployment
+
+### Infrastructure
+
+| Component | Detail |
+|-----------|--------|
+| **VPS** | DigitalOcean Droplet (Ubuntu) |
+| **Reverse Proxy** | Nginx — routes `/api/v1/*` and `/api-docs` → Express container (port 4568), `/` → React container (port 5173) |
+| **Containers** | Docker + Docker Compose (`primetrade-server`, `primetrade-client`) |
+| **DNS / CDN** | Cloudflare — proxied DNS, CDN caching, DDoS protection |
+| **Domain** | `primetrade.flyo.cc` |
+
+### Run locally with Docker
 
 ```bash
 # Build and start both services
-docker-compose up --build
+docker compose up --build
 ```
 
 Server: http://localhost:5050  
@@ -198,3 +211,16 @@ ADMIN_NAME=Admin
 - CORS restricted to `ALLOWED_ORIGINS`
 - Rate limiting on all routes
 - Zod input validation before any controller logic runs
+
+## Scalability
+
+The project is structured for horizontal and vertical scaling:
+
+- **Modular architecture** — routes, controllers, models, middlewares are fully decoupled; adding new modules (e.g., payments, notifications) requires no changes to existing code
+- **Stateless JWT auth** — no server-side sessions; any number of server instances can handle requests without shared state
+- **Docker + Docker Compose** — containerised deployment enables easy horizontal scaling behind a load balancer (e.g., nginx upstream, AWS ALB)
+- **Environment-driven config** — all secrets and URLs are env vars; zero code changes needed between dev/staging/prod
+- **MongoDB Atlas** — managed, auto-sharding DB that scales independently of the app tier
+- **Structured logging (Winston)** — logs written to files and stdout; ready to ship to centralised log aggregators (Datadog, Loki, ELK)
+- **Rate limiting** — global + per-IP limits protect against abuse at the application layer
+- **Future-ready hooks** — Redis can be dropped in for caching hot queries (e.g., task lists) or session blacklisting; the config layer (`config/index.js`) is the single place to wire it up
