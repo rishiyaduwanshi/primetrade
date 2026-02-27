@@ -8,6 +8,8 @@ import {
     getAdminStats,
 } from '../controllers/task.controller.js';
 import { authenticate, authorize } from '../middlewares/auth.mid.js';
+import { validate } from '../middlewares/validate.mid.js';
+import { createTaskSchema, updateTaskSchema } from '../utils/schemas.js';
 
 const router = Router();
 
@@ -114,7 +116,7 @@ router.get('/:id', getTask);
  *       201:
  *         description: Task created
  */
-router.post('/', createTask);
+router.post('/', validate(createTaskSchema), createTask);
 
 /**
  * @swagger
@@ -148,7 +150,7 @@ router.post('/', createTask);
  *       200:
  *         description: Task updated
  */
-router.put('/:id', updateTask);
+router.put('/:id', validate(updateTaskSchema), updateTask);
 
 /**
  * @swagger

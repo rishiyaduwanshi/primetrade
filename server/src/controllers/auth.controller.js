@@ -23,10 +23,6 @@ export const register = async (req, res, next) => {
   try {
     const { email, password, name } = req.body;
 
-    if (!email || !password) {
-      throw new BadRequestError('Email and password are required');
-    }
-
     const existingUser = await UserModel.findOne({ email });
     if (existingUser) {
       throw new BadRequestError('User with this email already exists');
@@ -59,10 +55,6 @@ export const register = async (req, res, next) => {
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      throw new BadRequestError('Email and password are required');
-    }
 
     const user = await UserModel.findOne({ email });
     if (!user || !(await user.comparePassword(password))) {

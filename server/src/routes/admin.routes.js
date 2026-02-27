@@ -2,7 +2,9 @@ import { Router } from 'express';
 import { authenticate, authorize } from '../middlewares/auth.mid.js';
 import UserModel from '../models/user.model.js';
 import appResponse from '../utils/appResponse.js';
-import { NotFoundError, BadRequestError } from '../utils/appError.js';
+import { NotFoundError } from '../utils/appError.js';
+import { validate } from '../middlewares/validate.mid.js';
+import { updateRoleSchema } from '../utils/schemas.js';
 
 const router = Router();
 
@@ -60,10 +62,9 @@ router.get('/users', async (req, res, next) => {
  *       200:
  *         description: Role updated
  */
-router.patch('/users/:id/role', async (req, res, next) => {
+router.patch('/users/:id/role', validate(updateRoleSchema), async (req, res, next) => {
     try {
         const { role } = req.body;
-        if (!['user', 'admin'].includes(role)) throw new BadRequestError('Role must be user or admin');
 
         const user = await UserModel.findByIdAndUpdate(
             req.params.id,

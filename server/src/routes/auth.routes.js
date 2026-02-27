@@ -6,6 +6,8 @@ import {
   logout as signout,
 } from '../controllers/auth.controller.js';
 import { authenticate } from '../middlewares/auth.mid.js';
+import { validate } from '../middlewares/validate.mid.js';
+import { registerSchema, loginSchema } from '../utils/schemas.js';
 
 const router = Router();
 
@@ -42,7 +44,7 @@ const router = Router();
  *       400:
  *         description: Validation error
  */
-router.post('/signup', signup);
+router.post('/signup', validate(registerSchema), signup);
 
 /**
  * @swagger
@@ -71,7 +73,7 @@ router.post('/signup', signup);
  *       401:
  *         description: Invalid credentials
  */
-router.post('/login', signin);
+router.post('/login', validate(loginSchema), signin);
 
 /**
  * @swagger
