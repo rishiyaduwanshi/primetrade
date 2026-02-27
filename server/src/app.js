@@ -11,6 +11,9 @@ import { corsOptions } from '../config/cors.js';
 
 const app = express();
 
+// Trust the first proxy (Nginx) so req.ip reflects the real client IP via X-Forwarded-For
+app.set('trust proxy', 1);
+
 app.use(cors(corsOptions));
 
 app.use(cookieParser())
