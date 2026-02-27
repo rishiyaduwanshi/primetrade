@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { useAuth } from '../context/AuthContext.jsx';
 import { getTasks, createTask, updateTask, deleteTask } from '../api/tasks.js';
@@ -117,6 +118,14 @@ export default function Dashboard() {
       <nav className="bg-white shadow-sm px-6 py-3 flex items-center justify-between">
         <span className="font-bold text-lg text-blue-600">PrimeTrade</span>
         <div className="flex items-center gap-3">
+          {user?.role === 'admin' && (
+            <Link
+              to="/admin"
+              className="text-sm text-purple-600 hover:text-purple-800 font-medium transition"
+            >
+              Admin Panel
+            </Link>
+          )}
           <span className="text-sm text-gray-600">
             {user?.name || user?.email}{' '}
             <span className={`text-xs px-2 py-0.5 rounded-full ml-1 ${user?.role === 'admin' ? 'bg-purple-100 text-purple-600' : 'bg-blue-100 text-blue-600'}`}>
