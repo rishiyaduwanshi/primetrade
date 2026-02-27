@@ -1,3 +1,19 @@
-*.md
-node_modules
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Env files
 .env
+.env.*
+!**/.env.eg
+
+# Logs
+logs/
+*.log
+
+# Build output
+dist/
+build/
+
+# OS
+.DS_Store
