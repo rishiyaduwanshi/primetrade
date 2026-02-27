@@ -1,0 +1,28 @@
+services:
+  server:
+    build: ./server
+    container_name: primetrade-server
+    ports:
+      - "5050:5050"
+    environment:
+      NODE_ENV: production
+      PORT: 5050
+      APP_URL: http://localhost:5050
+      MONGO_URI: ${MONGO_URI}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRY: ${JWT_EXPIRY:-1d}
+      JWT_REFRESH_SECRET: ${JWT_REFRESH_SECRET}
+      JWT_REFRESH_EXPIRY: ${JWT_REFRESH_EXPIRY:-7d}
+      ALLOWED_ORIGINS: http://localhost
+      GLOBAL_RATE_LIMIT_MAX: ${GLOBAL_RATE_LIMIT_MAX:-1000}
+      PER_IP_RATE_LIMIT_MAX: ${PER_IP_RATE_LIMIT_MAX:-100}
+    restart: unless-stopped
+
+  client:
+    build: ./client
+    container_name: primetrade-client
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+    restart: unless-stopped
