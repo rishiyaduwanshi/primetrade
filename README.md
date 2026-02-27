@@ -1,4 +1,4 @@
-# PrimeTrade — Scalable REST API with Authentication & RBAC
+# PrimeTrade - Scalable REST API with Authentication & RBAC
 
 A full-stack application built for the **Backend Developer Intern assignment**. Features JWT authentication, role-based access control (RBAC), Task CRUD APIs with Zod validation, Swagger documentation, React frontend, and Docker deployment.
 
@@ -12,7 +12,7 @@ A full-stack application built for the **Backend Developer Intern assignment**. 
 | **Swagger API Docs** | https://primetrade.flyo.cc/api-docs |
 | **GitHub Repo** | https://github.com/rishiyaduwanshi/primetrade |
 
-> **Note:** The backend server is not directly exposed. All traffic routes through Nginx — `/api/v1/*` and `/api-docs` are proxied to the Express server; `/` serves the React frontend. Swagger's "Try it out" works fully via this proxy.
+> **Note:** The backend server is not directly exposed. All traffic routes through Nginx - `/api/v1/*` and `/api-docs` are proxied to the Express server; `/` serves the React frontend. Swagger's "Try it out" works fully via this proxy.
 
 ---
 
@@ -22,13 +22,13 @@ A full-stack application built for the **Backend Developer Intern assignment**. 
 |----------|-------------------------------------------------|
 | Backend | Node.js 22, Express v5, MongoDB Atlas (Mongoose 8) |
 | Auth | JWT (access + refresh tokens), bcryptjs, httpOnly cookies |
-| Validation | Zod v4 — schema-based, returns `422` with field-level errors |
+| Validation | Zod v4 - schema-based, returns `422` with field-level errors |
 | Docs | Swagger UI (swagger-jsdoc + swagger-ui-express) |
 | Frontend | React 19, Vite 7, Tailwind CSS v4, React Router v7 |
 | Logging | Winston + Morgan (rotating file transport) |
 | Rate Limiting | express-rate-limit (global + per-IP) |
 | Deployment | Docker + Docker Compose, Nginx reverse proxy on **DigitalOcean VPS** |
-| DNS / CDN | **Cloudflare** — proxied DNS, CDN caching, DDoS protection |
+| DNS / CDN | **Cloudflare** - proxied DNS, CDN caching, DDoS protection |
 
 ---
 
@@ -127,9 +127,9 @@ Frontend starts at **http://localhost:5173**
 
 | Method | Endpoint        | Auth  | Description              |
 |--------|-----------------|-------|--------------------------|
-| POST   | `/signup`       | —     | Register a new user       |
-| POST   | `/login`        | —     | Login, set JWT cookies    |
-| POST   | `/refresh-token`| —     | Refresh access token      |
+| POST   | `/signup`       | -     | Register a new user       |
+| POST   | `/login`        | -     | Login, set JWT cookies    |
+| POST   | `/refresh-token`| -     | Refresh access token      |
 | POST   | `/logout`       | ✓     | Clear auth cookies        |
 
 ### Tasks  (`/api/v1/tasks`)
@@ -155,15 +155,15 @@ Frontend starts at **http://localhost:5173**
 
 ## Features
 
-- **JWT Auth** — Access token (1d) + Refresh token (7d) in httpOnly cookies; silent auto-refresh via Axios interceptor
-- **RBAC** — `user` / `admin` roles; `authorize()` middleware on all admin routes
-- **Zod Validation** — All request bodies validated before controllers run; returns `422` with field-level error array
-- **Task CRUD** — Paginated, filterable by status/priority, owner-scoped; admins see all tasks
-- **Admin Panel** — List users, toggle roles, delete users (UI + API)
-- **Admin Seed** — Auto-creates admin on server start from `ADMIN_EMAIL` / `ADMIN_PASSWORD` env vars
-- **Rate Limiting** — Global (1000 req/window) + per-IP (100 req/window)
-- **Logging** — HTTP logs via Morgan, app logs via Winston with daily rotation
-- **Swagger Docs** — Full OpenAPI 3.0 spec with cookie auth, all schemas documented
+- **JWT Auth** - Access token (1d) + Refresh token (7d) in httpOnly cookies; silent auto-refresh via Axios interceptor
+- **RBAC** - `user` / `admin` roles; `authorize()` middleware on all admin routes
+- **Zod Validation** - All request bodies validated before controllers run; returns `422` with field-level error array
+- **Task CRUD** - Paginated, filterable by status/priority, owner-scoped; admins see all tasks
+- **Admin Panel** - List users, toggle roles, delete users (UI + API)
+- **Admin Seed** - Auto-creates admin on server start from `ADMIN_EMAIL` / `ADMIN_PASSWORD` env vars
+- **Rate Limiting** - Global (1000 req/window) + per-IP (100 req/window)
+- **Logging** - HTTP logs via Morgan, app logs via Winston with daily rotation
+- **Swagger Docs** - Full OpenAPI 3.0 spec with cookie auth, all schemas documented
 
 ---
 
@@ -174,9 +174,9 @@ Frontend starts at **http://localhost:5173**
 | Component | Detail |
 |-----------|--------|
 | **VPS** | DigitalOcean Droplet (Ubuntu) |
-| **Reverse Proxy** | Nginx — routes `/api/v1/*` and `/api-docs` → Express container (port 4568), `/` → React container (port 5173) |
+| **Reverse Proxy** | Nginx - routes `/api/v1/*` and `/api-docs` → Express container (port 4568), `/` → React container (port 5173) |
 | **Containers** | Docker + Docker Compose (`primetrade-server`, `primetrade-client`) |
-| **DNS / CDN** | Cloudflare — proxied DNS, CDN caching, DDoS protection |
+| **DNS / CDN** | Cloudflare - proxied DNS, CDN caching, DDoS protection |
 | **Domain** | `primetrade.flyo.cc` |
 
 ### Run locally with Docker
@@ -193,7 +193,7 @@ Client: http://localhost:5173
 
 ## Default Admin Setup
 
-Set these in your `.env` — admin is auto-created on first server start:
+Set these in your `.env` - admin is auto-created on first server start:
 
 ```env
 ADMIN_EMAIL=admin@example.com
@@ -206,7 +206,7 @@ ADMIN_NAME=Admin
 ## Security
 
 - Passwords hashed with **bcrypt** (salt rounds: 10)
-- JWT stored in `httpOnly`, `sameSite: strict` cookies — not accessible via JS
+- JWT stored in `httpOnly`, `sameSite: strict` cookies - not accessible via JS
 - Refresh token **rotation** on every use
 - CORS restricted to `ALLOWED_ORIGINS`
 - Rate limiting on all routes
@@ -216,11 +216,11 @@ ADMIN_NAME=Admin
 
 The project is structured for horizontal and vertical scaling:
 
-- **Modular architecture** — routes, controllers, models, middlewares are fully decoupled; adding new modules (e.g., payments, notifications) requires no changes to existing code
-- **Stateless JWT auth** — no server-side sessions; any number of server instances can handle requests without shared state
-- **Docker + Docker Compose** — containerised deployment enables easy horizontal scaling behind a load balancer (e.g., nginx upstream, AWS ALB)
-- **Environment-driven config** — all secrets and URLs are env vars; zero code changes needed between dev/staging/prod
-- **MongoDB Atlas** — managed, auto-sharding DB that scales independently of the app tier
-- **Structured logging (Winston)** — logs written to files and stdout; ready to ship to centralised log aggregators (Datadog, Loki, ELK)
-- **Rate limiting** — global + per-IP limits protect against abuse at the application layer
-- **Future-ready hooks** — Redis can be dropped in for caching hot queries (e.g., task lists) or session blacklisting; the config layer (`config/index.js`) is the single place to wire it up
+- **Modular architecture** - routes, controllers, models, middlewares are fully decoupled; adding new modules (e.g., payments, notifications) requires no changes to existing code
+- **Stateless JWT auth** - no server-side sessions; any number of server instances can handle requests without shared state
+- **Docker + Docker Compose** - containerised deployment enables easy horizontal scaling behind a load balancer (e.g., nginx upstream, AWS ALB)
+- **Environment-driven config** - all secrets and URLs are env vars; zero code changes needed between dev/staging/prod
+- **MongoDB Atlas** - managed, auto-sharding DB that scales independently of the app tier
+- **Structured logging (Winston)** - logs written to files and stdout; ready to ship to centralised log aggregators (Datadog, Loki, ELK)
+- **Rate limiting** - global + per-IP limits protect against abuse at the application layer
+- **Future-ready hooks** - Redis can be dropped in for caching hot queries (e.g., task lists) or session blacklisting; the config layer (`config/index.js`) is the single place to wire it up
