@@ -16,6 +16,9 @@ services:
       ALLOWED_ORIGINS: http://localhost
       GLOBAL_RATE_LIMIT_MAX: ${GLOBAL_RATE_LIMIT_MAX:-1000}
       PER_IP_RATE_LIMIT_MAX: ${PER_IP_RATE_LIMIT_MAX:-100}
+      ADMIN_NAME: ${ADMIN_NAME:-Admin}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
     restart: unless-stopped
 
   client:

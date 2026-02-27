@@ -8,7 +8,12 @@ process.on('uncaughtException', (err) => {
 import { config } from './config/index.js';
 import app from './src/app.js';
 import dayjs from 'dayjs';
-import './db/connectDb.js'
+import mongoose from 'mongoose';
+import './db/connectDb.js';
+import { seedAdmin } from './src/utils/adminSeed.js';
+
+// Run admin seed once DB is ready
+mongoose.connection.once('open', seedAdmin);
 const PORT = config.PORT || 5440;
 
 const server = app.listen(PORT, () => {
