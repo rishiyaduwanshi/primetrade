@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authenticate, authorize } from '../middlewares/auth.mid.js';
 import UserModel from '../models/user.model.js';
 import appResponse from '../utils/appResponse.js';
-import { NotFoundError } from '../utils/appError.js';
+import { BadRequestError, NotFoundError } from '../utils/appError.js';
 import { validate } from '../middlewares/validate.mid.js';
 import { updateRoleSchema } from '../utils/schemas.js';
 
